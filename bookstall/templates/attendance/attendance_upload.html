@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Upload Excel Attendance Sheet</title>
+    <style>
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Upload Excel Attendance Sheet</h1>
+
+    <form method="POST" enctype="multipart/form-data">
+        {% csrf_token %}
+        <label for="excel_file">Select Excel File:</label>
+        <input type="file" name="excel_file" id="excel_file" required><br><br>
+
+        <button type="submit">Upload</button>
+    </form>
+
+    {% if error %}
+        <p style="color:red;">{{ error }}</p>
+    {% endif %}
+
+    {% if results %}
+        <h2>Attendance Report</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Employee ID</th>
+                    <th>Employee Name</th>
+                    <th>Late By Days</th>
+                    <th>Early Going By Days</th>
+                    <th>Absent Count</th>
+                    <th>Week Off Count</th>
+                    <th>Present Count</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for result in results %}
+                    <tr>
+                        <td>{{ result.employee_id }}</td>
+                        <td>{{ result.employee_name }}</td>
+                        <td>{{ result.late_by_days }}</td>
+                        <td>{{ result.early_going_by_days }}</td>
+                        <td>{{ result.absent_count }}</td>
+                        <td>{{ result.week_off_count }}</td>
+                        <td>{{ result.present_count }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No attendance data found.</p>
+    {% endif %}
+</body>
+</html>

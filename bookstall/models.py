@@ -7,7 +7,7 @@ class UserProfile(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.role}"
-    
+
 
 class Employee(models.Model):
     name = models.CharField(max_length=100)
@@ -19,3 +19,18 @@ class Employee(models.Model):
     def __str__(self):
         return self.name
 
+
+class AttendanceRecord(models.Model):
+    """
+    Model to store attendance data for employees.
+    """
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE, related_name="attendance_records")
+    late_by_days = models.PositiveIntegerField(default=0, verbose_name="Late By Days")
+    early_going_by_days = models.PositiveIntegerField(default=0, verbose_name="Early Going By Days")
+    absent_count = models.PositiveIntegerField(default=0, verbose_name="Absent Count")
+    week_off_count = models.PositiveIntegerField(default=0, verbose_name="Week Off Count")
+    present_count = models.FloatField(default=0.0, verbose_name="Present Count")  # Allows half-day precision
+    record_date = models.DateField(auto_now_add=True, verbose_name="Record Date")
+
+    def __str__(self):
+        return f"Attendance for {self.employee.name} on {self.record_date}"
