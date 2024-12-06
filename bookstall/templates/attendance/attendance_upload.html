@@ -43,11 +43,19 @@
                 <tr>
                     <th>Employee ID</th>
                     <th>Employee Name</th>
-                    <th>Late By Days</th>
-                    <th>Early Going By Days</th>
+                    <!-- <th>Total Work Duration</th> -->
+                    <!-- <th>Total OT</th> -->
+                    <th>Present Count</th>
                     <th>Absent Count</th>
                     <th>Week Off Count</th>
-                    <th>Present Count</th>
+                    <th>Holidays</th>
+                    <th>Leaves Taken</th>
+                    <!-- <th>Late By Hrs</th> -->
+                    <th>Late By Days</th>
+                    <!-- <th>Early By Hrs</th> -->
+                    <th>Early Going By Days</th>
+                    <!-- <th>Total Duration (+OT)</th> -->
+                    <!-- <th>Average Working Hrs</th> -->
                 </tr>
             </thead>
             <tbody>
@@ -55,11 +63,19 @@
                     <tr>
                         <td>{{ result.employee_id }}</td>
                         <td>{{ result.employee_name }}</td>
-                        <td>{{ result.late_by_days }}</td>
-                        <td>{{ result.early_going_by_days }}</td>
+                        <!-- <td>{{ result.total_work_duration }}</td> -->
+                        <!-- <td>{{ result.total_ot }}</td> -->
+                        <td>{{ result.present_count }}</td>
                         <td>{{ result.absent_count }}</td>
                         <td>{{ result.week_off_count }}</td>
-                        <td>{{ result.present_count }}</td>
+                        <td>{{ result.holidays }}</td>
+                        <td>{{ result.leaves_taken }}</td>
+                        <!-- <td>{{ result.late_by_hours }}</td> -->
+                        <td>{{ result.late_by_days }}</td>
+                        <!-- <td>{{ result.early_by_hours }}</td> -->
+                        <td>{{ result.early_going_by_days }}</td>
+                        <!-- <td>{{ result.total_duration_ot }}</td> -->
+                        <!-- <td>{{ result.avg_working_hours }}</td> -->
                     </tr>
                 {% endfor %}
             </tbody>
