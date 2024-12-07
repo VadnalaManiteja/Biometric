@@ -1,5 +1,5 @@
 from django.urls import path
-from . import authentication_views,employee_views,attendance_views
+from . import authentication_views,employee_views,attendance_views,views
 from django.shortcuts import redirect
 
 urlpatterns = [
@@ -12,4 +12,6 @@ urlpatterns = [
     path('employee-delete/<int:pk>/', employee_views.delete_employee_view, name='delete_employee'),
     path('', lambda request: redirect('login/')), 
     path('attendance-upload/',attendance_views.attendance_upload,name='attendance_upload'),
+    # path('base/', views.base, name='base'),
+    path('index/', views.index, name='index'),
 ]
