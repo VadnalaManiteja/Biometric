@@ -18,11 +18,15 @@ class Employee(models.Model):
     salary = models.PositiveIntegerField(default=0,null=True,blank=True)
     per_day_wage = models.DecimalField(max_digits=10,null=True, decimal_places=2, editable=False)
     per_hour_wage = models.DecimalField(max_digits=10, null=True,decimal_places=2, editable=False)
+    per_min_wage = models.DecimalField(max_digits=10, null=True,decimal_places=2, editable=False)
+
+
 
     def save(self, *args, **kwargs):
         # Calculate per day and per hour wages
         self.per_day_wage = self.salary / 30  # Assuming 30 days in a month
         self.per_hour_wage = self.per_day_wage / 8  # Assuming 8 working hours per day
+        self.per_min_wage = self.per_hour_wage / 60
         super().save(*args, **kwargs)
 
     def __str__(self):
