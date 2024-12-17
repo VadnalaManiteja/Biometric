@@ -5,12 +5,13 @@
 {% block content %}
     <h1>Upload Excel Attendance Sheet</h1>
 
-    <form method="POST" enctype="multipart/form-data">
+    <!-- Dropzone File Upload -->
+    <form id="attendance-dropzone" class="dropzone" method="POST" enctype="multipart/form-data" action="{% url 'attendance_upload' %}">
         {% csrf_token %}
-        <label for="excel_file">Select Excel File:</label>
-        <input type="file" name="excel_file" id="excel_file" required><br><br>
-
-        <button type="submit">Upload</button>
+        <div class="dz-message">
+            Drag and drop an Excel file here or click to upload.<br>
+            (Accepted formats: .xls, .xlsx)
+        </div>
     </form>
 
     {% if error %}
@@ -19,24 +20,26 @@
 
     {% if results %}
         <h2>Attendance Report</h2>
-        <table>
+
+        <!-- Download Buttons -->
+        <button id="download-excel-btn">Download as Excel</button>
+        <button id="download-pdf-btn">Download as PDF</button>
+        <button id="toggle-columns-btn">Hide/Show Columns</button>
+
+        <table id="attendance-table">
             <thead>
                 <tr>
                     <th>Employee ID</th>
                     <th>Employee Name</th>
-                    <!-- <th>Total Work Duration</th> -->
-                    <!-- <th>Total OT</th> -->
+                    <th>Total OT</th>
                     <th>Present Count</th>
                     <th>Absent Count</th>
                     <th>Week Off Count</th>
                     <th>Holidays</th>
                     <th>Leaves Taken</th>
-                    <!-- <th>Late By Hrs</th> -->
                     <th>Late By Days</th>
-                    <!-- <th>Early By Hrs</th> -->
                     <th>Early Going By Days</th>
-                    <!-- <th>Total Duration (+OT)</th> -->
-                    <!-- <th>Average Working Hrs</th> -->
+                    <th>Total Salary</th>
                 </tr>
             </thead>
             <tbody>
@@ -44,19 +47,15 @@
                     <tr>
                         <td>{{ result.employee_id }}</td>
                         <td>{{ result.employee_name }}</td>
-                        <!-- <td>{{ result.total_work_duration }}</td> -->
-                        <!-- <td>{{ result.total_ot }}</td> -->
+                        <td>{{ result.total_ot }}</td>
                         <td>{{ result.present_count }}</td>
                         <td>{{ result.absent_count }}</td>
                         <td>{{ result.week_off_count }}</td>
                         <td>{{ result.holidays }}</td>
                         <td>{{ result.leaves_taken }}</td>
-                        <!-- <td>{{ result.late_by_hours }}</td> -->
                         <td>{{ result.late_by_days }}</td>
-                        <!-- <td>{{ result.early_by_hours }}</td> -->
                         <td>{{ result.early_going_by_days }}</td>
-                        <!-- <td>{{ result.total_duration_ot }}</td> -->
-                        <!-- <td>{{ result.avg_working_hours }}</td> -->
+                        <td>{{ result.total_salary }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
@@ -64,6 +63,7 @@
     {% else %}
         <p>No attendance data found.</p>
     {% endif %}
+
     <style>
         table {
             width: 100%;
@@ -79,6 +79,95 @@
         th {
             background-color: #f2f2f2;
         }
+        button {
+            margin: 10px 0;
+            padding: 8px 16px;
+            background-color: #28a745;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .dropzone {
+            border: 2px dashed #007bff;
+            border-radius: 10px;
+            padding: 30px;
+            background-color: #f9f9f9;
+            text-align: center;
+            color: #007bff;
+        }
+        .dropzone .dz-message {
+            font-size: 18px;
+            font-weight: bold;
+        }
     </style>
-{% endblock %}    
-    
+
+    <!-- Include Dropzone.js, SheetJS, jsPDF, and html2canvas -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+    <!-- Dropzone Configuration -->
+    <script>
+        Dropzone.options.attendanceDropzone = {
+            paramName: "excel_file", // The name Django will recognize
+            maxFilesize: 5, // Limit to 5 MB
+            acceptedFiles: ".xls,.xlsx",
+            init: function() {
+                this.on("success", function(file, response) {
+                    alert("File uploaded successfully!");
+                    location.reload(); // Reload page to show updated results
+                });
+                this.on("error", function(file, errorMessage) {
+                    alert("Error: " + errorMessage);
+                });
+            }
+        };
+
+        // Download as Excel
+        document.getElementById('download-excel-btn').addEventListener('click', function () {
+            var table = document.getElementById('attendance-table');
+            var workbook = XLSX.utils.table_to_book(table, { sheet: "Attendance Report" });
+            XLSX.writeFile(workbook, 'attendance_report.xlsx');
+        });
+
+        // Download as PDF
+        document.getElementById('download-pdf-btn').addEventListener('click', function () {
+            var { jsPDF } = window.jspdf;
+            html2canvas(document.getElementById('attendance-table')).then(function (canvas) {
+                var imgData = canvas.toDataURL('image/png');
+                var pdf = new jsPDF('p', 'mm', 'a4');
+                var imgWidth = 190;
+                var imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+                pdf.addImage(imgData, 'PNG', 10, 10, imgWidth, imgHeight);
+                pdf.save('attendance_report.pdf');
+            });
+        });
+
+        // Toggle Columns Visibility
+        document.getElementById('toggle-columns-btn').addEventListener('click', function () {
+            var table = document.getElementById('attendance-table');
+            var columns = table.getElementsByTagName('th');
+            var rows = table.getElementsByTagName('tr');
+            
+            // Example: Toggle visibility of the last two columns (Late By Days and Early Going By Days)
+            var columnIndexesToToggle = [5,6,7,8, 9]; // Indexes of the columns to toggle
+            
+            for (var i = 0; i < rows.length; i++) {
+                for (var j = 0; j < columnIndexesToToggle.length; j++) {
+                    var cell = rows[i].cells[columnIndexesToToggle[j]];
+                    if (cell.style.display === "none") {
+                        cell.style.display = "";
+                    } else {
+                        cell.style.display = "none";
+                    }
+                }
+            }
+        });
+    </script>
+{% endblock %}

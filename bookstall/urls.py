@@ -14,4 +14,5 @@ urlpatterns = [
     path('attendance-upload/',attendance_views.attendance_upload,name='attendance_upload'),
     # path('base/', views.base, name='base'),
     path('index/', views.index, name='index'),
+
 ]

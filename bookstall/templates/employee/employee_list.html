@@ -22,6 +22,7 @@
                 <th scope="col">Salary (₹)</th>
                 <th scope="col">Per Day Salary (₹)</th>
                 <th scope="col">Per Hour Salary (₹)</th>
+                <th scope="col">Per Minute Salary (₹)</th>
                 <th scope="col">Actions</th>
             </tr>
         </thead>
@@ -37,6 +38,7 @@
                 <td>{{ employee.salary }}</td>
                 <td>{{ employee.per_day_wage }}</td>
                 <td>{{ employee.per_hour_wage }}</td>
+                <td>{{ employee.per_min_wage }}</td>
                 <td>
                     <!-- Edit Button -->
                     <a href="{% url 'update_employee' employee.id %}" class="btn btn-warning btn-sm">
