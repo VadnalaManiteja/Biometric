@@ -4,14 +4,19 @@
 
 {% block content %}
     <h1>Upload Excel Attendance Sheet</h1>
-
-    <!-- Dropzone File Upload -->
+<!-- 
     <form id="attendance-dropzone" class="dropzone" method="POST" enctype="multipart/form-data" action="{% url 'attendance_upload' %}">
         {% csrf_token %}
         <div class="dz-message">
             Drag and drop an Excel file here or click to upload.<br>
             (Accepted formats: .xls, .xlsx)
         </div>
+    </form> -->
+
+    <form action="{% url 'attendance_upload' %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <input type="file" name="excel_file">
+        <button type="submit">Upload File</button>
     </form>
 
     {% if error %}
@@ -24,22 +29,24 @@
         <!-- Download Buttons -->
         <button id="download-excel-btn">Download as Excel</button>
         <button id="download-pdf-btn">Download as PDF</button>
-        <button id="toggle-columns-btn">Hide/Show Columns</button>
+        <!-- <button id="toggle-columns-btn">Hide/Show Columns</button> -->
 
         <table id="attendance-table">
             <thead>
                 <tr>
                     <th>Employee ID</th>
                     <th>Employee Name</th>
-                    <th>Total OT</th>
-                    <th>Present Count</th>
-                    <th>Absent Count</th>
-                    <th>Week Off Count</th>
-                    <th>Holidays</th>
-                    <th>Leaves Taken</th>
-                    <th>Late By Days</th>
-                    <th>Early Going By Days</th>
+                    <th>Total Working Days</th>
+                    <th>Absent </th>
+                    <th>Present </th>
+                    <th>Late Login & Early Logout</th>
+                    <th>Days to Pay </th>
+                    <th>Per day Amount</th>
+                    <th> Amount to Pay</th>
+                    <th> OT Hours</th>
+                    <th> OT Amount</th>
                     <th>Total Salary</th>
+                    
                 </tr>
             </thead>
             <tbody>
@@ -47,14 +54,15 @@
                     <tr>
                         <td>{{ result.employee_id }}</td>
                         <td>{{ result.employee_name }}</td>
-                        <td>{{ result.total_ot }}</td>
-                        <td>{{ result.present_count }}</td>
+                        <td>31</td>
                         <td>{{ result.absent_count }}</td>
-                        <td>{{ result.week_off_count }}</td>
-                        <td>{{ result.holidays }}</td>
-                        <td>{{ result.leaves_taken }}</td>
-                        <td>{{ result.late_by_days }}</td>
-                        <td>{{ result.early_going_by_days }}</td>
+                        <td>{{ result.present_count }}</td>
+                        <td>{{ result.late_by_days_and_early_going_by_days }}</td>
+                        <td>{{ result.days_to_pay }}</td>
+                        <td>{{ result.per_day_wage }}</td>
+                        <td>{{ result.amout_to_pay }}</td>
+                        <td>{{ result.total_ot }}</td>
+                        <td>{{ result.per_hour_wage }}</td>
                         <td>{{ result.total_salary }}</td>
                     </tr>
                 {% endfor %}
@@ -64,46 +72,7 @@
         <p>No attendance data found.</p>
     {% endif %}
 
-    <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        table, th, td {
-            border: 1px solid black;
-        }
-        th, td {
-            padding: 10px;
-            text-align: center;
-        }
-        th {
-            background-color: #f2f2f2;
-        }
-        button {
-            margin: 10px 0;
-            padding: 8px 16px;
-            background-color: #28a745;
-            color: #fff;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #218838;
-        }
-        .dropzone {
-            border: 2px dashed #007bff;
-            border-radius: 10px;
-            padding: 30px;
-            background-color: #f9f9f9;
-            text-align: center;
-            color: #007bff;
-        }
-        .dropzone .dz-message {
-            font-size: 18px;
-            font-weight: bold;
-        }
-    </style>
-
+   
     <!-- Include Dropzone.js, SheetJS, jsPDF, and html2canvas -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/dropzone.min.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/5.9.3/min/dropzone.min.js"></script>

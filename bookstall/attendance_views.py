@@ -48,35 +48,17 @@ def process_row(row_num, sheet):
             early_going_by_days = extract_value(details_string, "Early going By Days")
             total_duration_ot = extract_value(details_string, "Total Duration\\(\\+OT\\)")
             avg_working_hours = extract_value(details_string, "Average Working Hrs")
-
+            late_by_days_and_early_going_by_days = int(late_by_days) + int(early_going_by_days)
             # Parse total OT (hours and minutes)
             hours, minutes = total_ot.split(":")
             hours = int(hours)
             minutes = int(minutes)
-
-            # Calculate total salary
-            total_salary = float(present_count) * float(per_day_wage)
-            total_salary += (float(hours) * float(per_hour_wage)) + (float(minutes) * float(per_min_wage))
-            
-            # Deduct salary for late and early going days
-            late_deductions = int(float(late_by_days) // 4)  # 1 day salary deducted for every 4 late days
-            early_deductions = int(float(early_going_by_days) // 2)  # 1 day salary deducted for every 2 early going days
-            
-            total_deductions = (late_deductions + early_deductions) * float(per_day_wage)
-            total_salary = total_salary - total_deductions  # Apply deductions
-            
-            # Print additional details if the employee is "Kumar"
-            if employee_name == "Kumar":
-                print(type(total_salary))
-                print(type(total_deductions))
-                print(f"Hours: {hours}, Minutes: {minutes}")
-                print(f"Deduction Late: {late_deductions} day(s)")
-                print(f"Deduction Early: {early_deductions} day(s)")
-                print(f"Before Deduction Total Salary: {total_salary + total_deductions}")
-                print(f"Late Deductions: {late_deductions} day(s), Early Deductions: {early_deductions} day(s)")
-                print(f"Total Deductions: {total_deductions}")
-                print(f"Total Salary: {total_salary}")
-            
+            total_late_and_early_out_days = int(late_by_days_and_early_going_by_days)
+            deduction_days = total_late_and_early_out_days // 4 
+            days_to_pay = float(present_count)- deduction_days
+            amout_to_pay = days_to_pay * float(per_day_wage)
+            total_ot_amount = float(hours) * float(per_hour_wage)  + float(minutes) * float(per_min_wage)
+            total_salary = amout_to_pay + total_ot_amount
             return {
                 'employee_id': employee_id,
                 'employee_name': employee_name,
@@ -93,7 +75,12 @@ def process_row(row_num, sheet):
                 'early_going_by_days': early_going_by_days,
                 'total_duration_ot': total_duration_ot,
                 'avg_working_hours': avg_working_hours,
-                'total_salary': int(round(total_salary))
+                'total_salary': int(round(total_salary)),
+                'late_by_days_and_early_going_by_days':late_by_days_and_early_going_by_days,
+                'days_to_pay':days_to_pay,
+                'per_day_wage':per_day_wage,
+                'per_hour_wage':per_hour_wage,
+                'amout_to_pay':amout_to_pay
             }
         else:
             print(f"Invalid employee data in row {row_num + 1}.")
@@ -102,6 +89,7 @@ def process_row(row_num, sheet):
 
 # Django view function to handle file upload and process the Excel data
 def attendance_upload(request):
+    print("hit this view")
     results = []  # List to store the results
 
     if request.method == "POST" and request.FILES.get("excel_file"):
@@ -113,7 +101,7 @@ def attendance_upload(request):
 
             # Select the first sheet (or specify by index or name)
             sheet = workbook.sheet_by_index(0)
-
+            print("Sheet Name:", sheet)
             # Loop through the rows starting from row 10 (index 10) and step by 10 (11, 21, 31, etc.)
             for row_num in range(10, sheet.nrows, 10):  # Process row 11, 21, 31, etc.
                 employee_data = process_row(row_num, sheet)
