@@ -4,121 +4,182 @@
 
 {% block content %}
 <div class="container mt-2">
-    <form id="employeeForm" method="post" class="needs-validation shadow p-4 rounded bg-light" novalidate>
+    <form id="updateEmployeeForm" method="post" class="needs-validation shadow p-4 rounded bg-light" novalidate>
         {% csrf_token %}
         <h2 class="text-center mb-4">Update Employee</h2>
 
-        <!-- Employee Name -->
-        <div class="mb-3">
-            <label for="employee_name" class="form-label">Employee Name:</label>
-            <input 
-                type="text" 
-                id="employee_name" 
-                name="employee_name" 
-                class="form-control" 
-                placeholder="Enter employee name" 
-                value="{{ employee.name }}"
-                required
-                pattern="^[a-zA-Z\s.]+$">
-            <div class="invalid-feedback">Name should contain only letters and spaces.</div>
+        <!-- Section 1 -->
+        <div class="section mb-4">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <!-- Employee Name -->
+                    <div class="mb-3">
+                        <label for="employee_name" class="form-label">Employee Name:</label>
+                        <input 
+                            type="text" 
+                            id="employee_name" 
+                            name="employee_name" 
+                            class="form-control" 
+                            value="{{ employee.name }}"
+                            required
+                            pattern="^[a-zA-Z\s.]+$">
+                        <div class="invalid-feedback">Name should contain only letters and spaces.</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <!-- Employee ID -->
+                    <div class="mb-3">
+                        <label for="employee_id" class="form-label">Employee ID:</label>
+                        <input 
+                            type="text" 
+                            id="employee_id" 
+                            name="employee_id" 
+                            class="form-control" 
+                            value="{{ employee.employee_id }}"
+                            required 
+                            pattern="^[A-Za-z0-9]+$">
+                        <div class="invalid-feedback">Employee ID should contain only alphanumeric characters.</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <!-- Email -->
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email:</label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="form-control" 
+                            value="{{ employee.email }}"
+                            required>
+                        <div class="invalid-feedback">Please enter a valid email address.</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Email -->
-        <div class="mb-3">
-            <label for="email" class="form-label">Email:</label>
-            <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                class="form-control" 
-                placeholder="Enter employee email" 
-                value="{{ employee.email }}"
-                required>
-            <div class="invalid-feedback">Please enter a valid email address.</div>
+        <!-- Section 2 -->
+        <div class="section mb-4">
+            <div class="row mb-3">
+                <div class="col-md-4">
+                    <!-- Contact -->
+                    <div class="mb-3">
+                        <label for="contact" class="form-label">Contact:</label>
+                        <input 
+                            type="text" 
+                            id="contact" 
+                            name="contact" 
+                            class="form-control" 
+                            value="{{ employee.contact }}"
+                            required 
+                            pattern="^\d{10}$">
+                        <div class="invalid-feedback">Contact number should be exactly 10 digits.</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <!-- Designation -->
+                    <div class="mb-3">
+                        <label for="designation" class="form-label">Designation:</label>
+                        <select 
+                            id="designation" 
+                            name="designation" 
+                            class="form-select" 
+                            required>
+                            <option value="" disabled>Select designation</option>
+                            <option value="Supervisor" {% if employee.designation == 'Supervisor' %}selected{% endif %}>Supervisor</option>
+                            <option value="Manager" {% if employee.designation == 'Manager' %}selected{% endif %}>Manager</option>
+                            <option value="Worker" {% if employee.designation == 'Worker' %}selected{% endif %}>Worker</option>
+                        </select>
+                        <div class="invalid-feedback">Please select a designation.</div>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <!-- Joining Date -->
+                    <div class="mb-3">
+                        <label for="joining_date" class="form-label">Joining Date:</label>
+                        <input 
+                            type="date" 
+                            id="joining_date" 
+                            name="joining_date" 
+                            class="form-control" 
+                            value="{{ employee.joining_date|date:'Y-m-d' }}"
+                            required>
+                        <div class="invalid-feedback">Please select a joining date.</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Contact -->
-        <div class="mb-3">
-            <label for="contact" class="form-label">Contact:</label>
-            <input 
-                type="text" 
-                id="contact" 
-                name="contact" 
-                class="form-control" 
-                placeholder="Enter contact number" 
-                value="{{ employee.contact }}"
-                required 
-                pattern="^\d{10}$">
-            <div class="invalid-feedback">Contact number should be exactly 10 digits.</div>
-        </div>
-
-        <!-- Designation -->
-        <div class="mb-3">
-            <label for="designation" class="form-label">Designation:</label>
-            <select 
-                id="designation" 
-                name="designation" 
-                class="form-select" 
-                required>
-                <option value="" disabled>Select designation</option>
-                <option value="Supervisor" {% if employee.designation == "Supervisor" %}selected{% endif %}>Supervisor</option>
-                <option value="Manager" {% if employee.designation == "Manager" %}selected{% endif %}>Manager</option>
-                <option value="Worker" {% if employee.designation == "Worker" %}selected{% endif %}>Worker</option>
-            </select>
-            <div class="invalid-feedback">Please select a designation.</div>
-        </div>
-
-        <!-- Joining Date -->
-        <div class="mb-3">
-            <label for="joining_date" class="form-label">Joining Date:</label>
-            <input 
-                type="date" 
-                id="joining_date" 
-                name="joining_date" 
-                class="form-control" 
-                value="{{ employee.joining_date|date:'Y-m-d' }}"
-                required>
-            <div class="invalid-feedback">Please select a joining date.</div>
-        </div>
-
-        <!-- Salary -->
-        <div class="mb-3">
-            <label for="salary" class="form-label">Salary:</label>
-            <input 
-                type="number" 
-                id="salary" 
-                name="salary" 
-                class="form-control" 
-                value="{{ employee.salary }}" 
-                required 
-                min="1000">
-            <div class="invalid-feedback">Salary must be at least 1000.</div>
+        <!-- Section 3 -->
+        <div class="section mb-4">
+            <div class="row mb-3">
+                <div class="col-md-3">
+                    <!-- Salary per Day -->
+                    <div class="mb-3">
+                        <label for="salary_per_day" class="form-label">Salary per Day:</label>
+                        <input 
+                            type="number" 
+                            id="salary_per_day" 
+                            name="salary_per_day" 
+                            class="form-control" 
+                            value="{{ employee.salary_per_day }}"
+                            required 
+                            min="100">
+                        <div class="invalid-feedback">Salary per day must be at least 100.</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <!-- Salary per Hour -->
+                    <div class="mb-3">
+                        <label for="salary_per_hour" class="form-label">Salary per Hour:</label>
+                        <input 
+                            type="number" 
+                            id="salary_per_hour" 
+                            name="salary_per_hour" 
+                            class="form-control" 
+                            value="{{ employee.salary_per_hour }}"
+                            required 
+                            min="10">
+                        <div class="invalid-feedback">Salary per hour must be at least 10.</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <!-- Early Logouts / Late Logins -->
+                    <div class="mb-3">
+                        <label for="early_logouts_late_logins" class="form-label">Early Logouts / Late Logins:</label>
+                        <input 
+                            type="number" 
+                            id="early_logouts_late_logins" 
+                            name="early_logouts_late_logins" 
+                            class="form-control" 
+                            value="{{ employee.early_logouts_late_logins }}"
+                            required 
+                            min="0">
+                        <div class="invalid-feedback">Please enter a valid number.</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <!-- Days to Deduct -->
+                    <div class="mb-3">
+                        <label for="days_to_deduct" class="form-label">Days to Deduct:</label>
+                        <input 
+                            type="number" 
+                            id="days_to_deduct" 
+                            name="days_to_deduct" 
+                            class="form-control" 
+                            value="{{ employee.days_to_deduct }}"
+                            required 
+                            min="0">
+                        <div class="invalid-feedback">Please enter a valid number.</div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Submit Button -->
-        <div class="d-flex justify-content-center gap-3">
+        <div class="d-flex justify-content-center">
             <button type="submit" class="btn btn-success w-25">Update</button>
-            <a href="{% url 'employee_list' %}" class="btn btn-secondary w-25">Back to Employee List</a>
         </div>
     </form>
 </div>
-
-<!-- JavaScript Validation -->
-<script>
-    // JavaScript to enable Bootstrap's validation styles
-    (function () {
-        'use strict';
-        var forms = document.querySelectorAll('.needs-validation');
-
-        Array.prototype.slice.call(forms).forEach(function (form) {
-            form.addEventListener('submit', function (event) {
-                if (!form.checkValidity()) {
-                    event.preventDefault(); // Prevent submission
-                    event.stopPropagation(); // Stop further event handling
-                }
-                form.classList.add('was-validated'); // Add Bootstrap validation styles
-            }, false);
-        });
-    })();
-</script>
 {% endblock %}

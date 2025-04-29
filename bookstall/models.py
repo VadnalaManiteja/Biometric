@@ -11,26 +11,19 @@ class UserProfile(models.Model):
 
 class Employee(models.Model):
     name = models.CharField(max_length=100)
+    employee_id = models.CharField(max_length=50,unique=True,default='unknown')
     email = models.EmailField(unique=True)
     contact = models.CharField(max_length=15)
     designation = models.CharField(max_length=50)
     joining_date = models.DateField()
-    salary = models.PositiveIntegerField(default=0,null=True,blank=True)
-    per_day_wage = models.DecimalField(max_digits=10,null=True, decimal_places=2, editable=False)
-    per_hour_wage = models.DecimalField(max_digits=10, null=True,decimal_places=2, editable=False)
-    per_min_wage = models.DecimalField(max_digits=10, null=True,decimal_places=2, editable=False)
-
-
-
-    def save(self, *args, **kwargs):
-        # Calculate per day and per hour wages
-        self.per_day_wage = self.salary / 30  # Assuming 30 days in a month
-        self.per_hour_wage = self.per_day_wage / 8  # Assuming 8 working hours per day
-        self.per_min_wage = self.per_hour_wage / 60
-        super().save(*args, **kwargs)
+    salary_per_day = models.DecimalField(max_digits=10, decimal_places=2,null=True)
+    salary_per_hour = models.DecimalField(max_digits=10, decimal_places=2,null=True)
+    early_logouts_late_logins = models.PositiveIntegerField(default=0)
+    days_to_deduct = models.PositiveIntegerField(default=0)
 
     def __str__(self):
         return self.name
+
 
 
 class AttendanceRecord(models.Model):

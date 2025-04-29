@@ -2,19 +2,27 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib import messages
 from .models import Employee
 
+from django.shortcuts import render, redirect
+from django.contrib import messages
+from .models import Employee
+
 # View to create a new employee
 def employee_form(request):
     if request.method == 'POST':
         # Retrieve form data
         name = request.POST.get('employee_name')
+        employee_id = request.POST.get('employee_id')
         email = request.POST.get('email')
         contact = request.POST.get('contact')
         designation = request.POST.get('designation')
         joining_date = request.POST.get('joining_date')
-        salary = request.POST.get('salary')
+        salary_per_day = request.POST.get('salary_per_day')
+        salary_per_hour = request.POST.get('salary_per_hour')
+        early_logouts_late_logins = request.POST.get('early_logouts_late_logins')
+        days_to_deduct = request.POST.get('days_to_deduct')
 
         # Input validation
-        if not all([name, email, contact, designation, joining_date, salary]):
+        if not all([name, employee_id, email, contact, designation, joining_date, salary_per_day, salary_per_hour, early_logouts_late_logins, days_to_deduct]):
             messages.error(request, "All fields are required.")
             return render(request, 'employee/employee_form.html')
 
@@ -22,18 +30,23 @@ def employee_form(request):
         try:
             Employee.objects.create(
                 name=name,
+                employee_id=employee_id,
                 email=email,
                 contact=contact,
                 designation=designation,
                 joining_date=joining_date,
-                salary=int(salary),
+                salary_per_day=float(salary_per_day),
+                salary_per_hour=float(salary_per_hour),
+                early_logouts_late_logins=int(early_logouts_late_logins),
+                days_to_deduct=int(days_to_deduct)
             )
             messages.success(request, "Employee added successfully.")
-            return redirect('employee_list')  # Redirect to the list page
+            return redirect('employee_list')  # Redirect to the employee list page
         except Exception as e:
             messages.error(request, f"Error adding employee: {e}")
-    
+
     return render(request, 'employee/employee_form.html')
+
 
 
 # View to list all employees
@@ -49,26 +62,36 @@ def update_employee_view(request, pk):
 
     if request.method == 'POST':
         # Update employee details from the form
-        name = request.POST.get('employee_name')
+        employee_name = request.POST.get('employee_name')
+        employee_id = request.POST.get('employee_id')
         email = request.POST.get('email')
         contact = request.POST.get('contact')
         designation = request.POST.get('designation')
         joining_date = request.POST.get('joining_date')
-        salary = request.POST.get('salary')
+        salary_per_day = request.POST.get('salary_per_day')
+        salary_per_hour = request.POST.get('salary_per_hour')
+        early_logouts_late_logins = request.POST.get('early_logouts_late_logins')
+        days_to_deduct = request.POST.get('days_to_deduct')
 
         # Input validation
-        if not all([name, email, contact, designation, joining_date, salary]):
+        if not all([employee_name, employee_id, email, contact, designation, joining_date, salary_per_day, salary_per_hour, early_logouts_late_logins, days_to_deduct]):
             messages.error(request, "All fields are required.")
             return render(request, 'employee/update_employee.html', {'employee': employee})
 
         try:
-            employee.name = name
+            # Update employee details
+            employee.name = employee_name
+            employee.employee_id = employee_id
             employee.email = email
             employee.contact = contact
             employee.designation = designation
             employee.joining_date = joining_date
-            employee.salary = int(salary)
-            employee.save()  # Triggers per-day and per-hour wage calculation
+            employee.salary_per_day = float(salary_per_day)
+            employee.salary_per_hour = float(salary_per_hour)
+            employee.early_logouts_late_logins = int(early_logouts_late_logins)
+            employee.days_to_deduct = int(days_to_deduct)
+
+            employee.save()  # Save updated data
             messages.success(request, "Employee updated successfully.")
             return redirect('employee_list')  # Redirect to the employee list
         except Exception as e:
@@ -76,6 +99,7 @@ def update_employee_view(request, pk):
 
     # Render the update form with the current employee details
     return render(request, 'employee/update_employee.html', {'employee': employee})
+
 
 
 # View to delete an employee

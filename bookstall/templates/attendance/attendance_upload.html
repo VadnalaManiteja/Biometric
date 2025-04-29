@@ -36,7 +36,7 @@
                 <tr>
                     <th>Employee ID</th>
                     <th>Employee Name</th>
-                    <th>Total Working Days</th>
+                    
                     <th>Absent </th>
                     <th>Present </th>
                     <th>Late Login & Early Logout</th>
@@ -54,15 +54,14 @@
                     <tr>
                         <td>{{ result.employee_id }}</td>
                         <td>{{ result.employee_name }}</td>
-                        <td>31</td>
                         <td>{{ result.absent_count }}</td>
                         <td>{{ result.present_count }}</td>
                         <td>{{ result.late_by_days_and_early_going_by_days }}</td>
                         <td>{{ result.days_to_pay }}</td>
-                        <td>{{ result.per_day_wage }}</td>
+                        <td>{{ result.salary_per_day }}</td>
                         <td>{{ result.amout_to_pay }}</td>
                         <td>{{ result.total_ot }}</td>
-                        <td>{{ result.per_hour_wage }}</td>
+                        <td>{{ result.total_ot_amount }}</td>
                         <td>{{ result.total_salary }}</td>
                     </tr>
                 {% endfor %}
